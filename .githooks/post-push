@@ -1,9 +1,0 @@
-#!/bin/bash
-
-# URL de tu webhook de EasyPanel
-EASYPANEL_WEBHOOK="http://206.183.130.17:3000/api/deploy/1af605135b9969ad58f603fc660e97e3a008dbe6c4ddf9ac"
-
-# Enviar solicitud POST para activar deploy
-curl -X POST $EASYPANEL_WEBHOOK
-
-echo "✅ Deploy automático activado en EasyPanel"
