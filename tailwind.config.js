@@ -15,6 +15,10 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            colors: {
+                brandBlack: '#000000',
+                brandGold: '#C9A761', // dorado metálico
+            },
         },
     },
 
