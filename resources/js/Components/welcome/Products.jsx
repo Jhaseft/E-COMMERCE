@@ -16,9 +16,9 @@ export default function Products() {
   const [addingId, setAddingId] = useState(null);
   const [successId, setSuccessId] = useState(null);
   const { addToCart } = useCart();
-
+////////////////////////////////Super importante/////////////////////////////////////////////////////////
   const priorityCategories = ['Destacados', 'Ofertas'];
-
+/////////////////////////////////////////////////////////////////////////////////////////
   useEffect(() => {
     setLoading(true);
     fetch('/products')
@@ -84,7 +84,7 @@ export default function Products() {
 
         // Condiciones de carrusel según dispositivo
         const isMobileCarousel = filteredProducts.length > 1;
-        const isTabletCarousel = filteredProducts.length > 2;
+        const isTabletCarousel = filteredProducts.length >= 2;
         const isDesktopCarousel = filteredProducts.length > 3;
 
         return (

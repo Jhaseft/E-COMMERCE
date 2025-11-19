@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OrderDeliveredAdmin;
+use App\Mail\OrderDeliveredCustomer;
 
 class OrderController extends Controller
 {
@@ -45,26 +48,44 @@ public function index(Request $request)
     /**
      * Actualizar una orden (JSON)
      */
-    public function update(Request $request, Order $order)
-    {
-        $request->validate([
-            'status_id'         => 'required|exists:order_statuses,id',
-            'payment_method_id' => 'required|exists:payment_methods,id',
-            'total'             => 'required|numeric|min:0',
-            'note'              => 'nullable|string|max:500',
-            'delivery_date'     => 'nullable|date',
-            'delivery_time'     => 'nullable|string|max:10',
-        ]);
+  public function update(Request $request, Order $order)
+{
+    $request->validate([
+        'status_id'         => 'required|exists:order_statuses,id',
+        'payment_method_id' => 'required|exists:payment_methods,id',
+        'total'             => 'required|numeric|min:0',
+        'note'              => 'nullable|string|max:500',
+        'delivery_date'     => 'nullable|date',
+        'delivery_time'     => 'nullable|string|max:10',
+    ]);
 
-        $order->update($request->only([
-            'status_id', 'payment_method_id', 'total', 'note', 'delivery_date', 'delivery_time'
-        ]));
+    $previousStatus = $order->status_id;
 
-        return response()->json([
-            'success' => true,
-            'order'   => $order,
-        ]);
+    // Actualizar orden
+    $order->update($request->only([
+        'status_id', 'payment_method_id', 'total', 'note', 'delivery_date', 'delivery_time'
+    ]));
+
+    // Descontar stock si pasa a Completado (id=3) y antes no estaba completado
+    if ($order->status_id == 3 && $previousStatus != 3) {
+        foreach ($order->items as $item) {
+            $product = $item->product;
+            $product->stock = max(0, $product->stock - $item->quantity);
+            $product->save();
+        }
     }
+
+    // Enviar correos si pasa a Entregado (id=4) y antes no estaba entregado
+    if ($order->status_id == 3 && $previousStatus != 4) {
+        Mail::to('jhasesaat@gmail.com')->send(new OrderDeliveredAdmin($order));
+        Mail::to($order->user->email)->send(new OrderDeliveredCustomer($order));
+    }
+
+    return response()->json([
+        'success' => true,
+        'order'   => $order,
+    ]);
+}
 
     /**
      * Eliminar una orden (JSON)
