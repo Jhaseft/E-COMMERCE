@@ -71,7 +71,7 @@ export default function CategoryProducts({ category, products }) {
       <div className="flex justify-between items-center mb-6">
         <button
           className="px-4 py-2 bg-gray-800 text-white rounded-xl shadow hover:bg-gray-900"
-          onClick={() => window.history.back()}
+          onClick={() =>  router.visit('/admin/dashboard')}
         >
           ← Volver
         </button>

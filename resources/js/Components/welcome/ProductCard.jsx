@@ -24,14 +24,7 @@ export default function ProductCard({
         </div>
       )}
 
-      {/* Logo más grande y más a la derecha */}
-      <div className="absolute top-3 right-8 w-20 h-20">
-        <img
-          src="https://res.cloudinary.com/dcmjhycsr/image/upload/v1763825595/Captura_de_pantalla_2025-11-22_102220-removebg-preview_eur39c.png"
-          alt="Logo Empresa"
-          className="w-full h-full object-contain"
-        />
-      </div>
+    
 
       {/* Imagen del producto */}
       <div className="w-full h-80 sm:h-72 lg:h-[25rem] overflow-hidden rounded-t-2xl">
