@@ -58,30 +58,26 @@ export default function CheckoutPageContent() {
             subtotal: item.price * item.qty
         }));
 
-       router.post('/orders/store', {
-    customer_name: customerName,
-    customer_phone: customerPhone,
-    shipping_type: shippingType,
-    delivery_date: date,
-    delivery_time: time,
-    address,
-    cart: orderItems,
-    subtotal,
-    total,
-}, {
-    onError: (errors) => {
-        console.error("Error al crear pedido:", errors);
-        setProcessing(false);
-    },
-    onSuccess: (page) => {
-        setProcessing(false);
-        if (page.props.redirect) {
-            window.location.href = page.props.redirect;
-        } else {
-            alert("Pedido realizado con éxito!");
-        }
-    }
-});
+        // Enviar pedido al backend
+        router.post('/orders/store', {
+            customer_name: customerName,
+            customer_phone: customerPhone,
+            shipping_type: shippingType,
+            delivery_date: date,
+            delivery_time: time,
+            address,
+            cart: orderItems,
+            subtotal,
+            total,
+        }, {
+            onError: (errors) => {
+                console.error("Error al crear pedido: ", errors);
+                setProcessing(false);
+            },
+            onSuccess: () => {
+                setProcessing(false);
+            }
+        });
     };
 
     return (
