@@ -20,10 +20,9 @@ export default function Products() {
 
   const priorityCategories = ['Destacados', 'Ofertas'];
 
-  // Mini logo dorado tipo águila (SVG)
   const EagleIcon = ({ size = 60 }) => (
     <img
-      src="https://res.cloudinary.com/dcmjhycsr/image/upload/v1763825595/Captura_de_pantalla_2025-11-22_102220-removebg-preview_eur39c.png"  // ruta relativa a public/
+      src="https://res.cloudinary.com/dcmjhycsr/image/upload/v1763825595/Captura_de_pantalla_2025-11-22_102220-removebg-preview_eur39c.png"
       alt="Águila"
       width={size}
       height={size}
@@ -87,10 +86,8 @@ export default function Products() {
   return (
     <section className="px-4 sm:px-6 lg:px-8 text-white">
 
-      {/* 🔍 Buscador */}
       <SearchBar onSearch={setSearchTerm} />
 
-      {/* 🎯 Filtros */}
       <CategoryFilter
         categories={categories}
         selectedCategory={selectedCategory}
@@ -104,100 +101,105 @@ export default function Products() {
           return name.includes(search);
         });
 
-        if (filteredProducts.length === 0) return null;
-
-        const isMobileCarousel = filteredProducts.length > 1;
-        const isTabletCarousel = filteredProducts.length >= 2;
-        const isDesktopCarousel = filteredProducts.length > 3;
+        const hasChildren = category.children && category.children.length > 0;
 
         return (
           <div key={category.id} className="mb-12">
 
-            {/* 🔱 Separador dorado entre categorías */}
             {idx !== 0 && (
               <div className="my-10 flex items-center gap-4">
                 <div className="flex-1 h-[2px] bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent"></div>
               </div>
             )}
 
-            {/* 🦅 Título de categoría con mini águila (versión premium cursiva) */}
-            <div className="relative mb-8  select-none">
-
-              {/* Línea superior con brillo */}
+            <div className="relative mb-8 select-none">
               <div className="absolute -top-3 left-0 w-28 h-1 bg-gradient-to-r from-[#D4AF37] to-[#f8e7a3] shadow-[0_0_10px_#D4AF37] rounded-full"></div>
-
-              {/* Título en cursiva */}
-              <h2
-                className="
-      md:text-5xl text-4xl font-extrabold italic flex items-center gap-4 tracking-wide
-      drop-shadow-[0_0_8px_rgba(212,175,55,0.6)]
-      text-transparent bg-clip-text
-      bg-gradient-to-r from-[#D4AF37] to-[#fcefc2]
-    "
-              >
-                <EagleIcon className="w-10 h-10 drop-shadow-[0_0_6px_#D4AF37]" />
+              <h2 className="md:text-5xl text-4xl font-extrabold italic flex items-center gap-4 tracking-wide drop-shadow-[0_0_8px_rgba(212,175,55,0.6)] text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#fcefc2]">
+                <EagleIcon />
                 {category.name}
               </h2>
-
-              {/* Línea inferior */}
               <div className="mt-3 h-1 w-full bg-gradient-to-r from-[#D4AF37]/90 to-transparent rounded-full shadow-[0_0_10px_#D4AF37]"></div>
             </div>
 
-
-            {/* 📝 Descripción opcional */}
             {category.description && (
               <p className="text-gray-300 mb-8 text-lg italic pl-2">
                 {category.description}
               </p>
             )}
 
-            {/* 🛒 Productos */}
-            {(isDesktopCarousel || isTabletCarousel || isMobileCarousel) ? (
-              <Swiper
-                className="z-[1]"
-                modules={[Navigation, Pagination, Autoplay]}
-                spaceBetween={20}
-                slidesPerView={1}
-                navigation={isDesktopCarousel || isTabletCarousel}
-                pagination={false}
-                autoplay={isDesktopCarousel ? { delay: 2500, disableOnInteraction: false } : false}
-                breakpoints={{
-                  640: { slidesPerView: 2 },
-                  768: { slidesPerView: 2 },
-                  1024: { slidesPerView: 3 },
-                }}
-                style={{
-                  '--swiper-navigation-color': '#000', // Esto cambia las flechas a negro
-                }}
-              >
-             
-                {filteredProducts.map(product => (
-                  <SwiperSlide key={product.id}>
-                    <ProductCard
-                      product={product}
-                      handleAddToCart={handleAddToCart}
-                      addingId={addingId}
-                      successId={successId}
-                    />
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filteredProducts.map(product => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    handleAddToCart={handleAddToCart}
-                    addingId={addingId}
-                    successId={successId}
-                  />
-                ))}
-              </div>
+            {filteredProducts.length > 0 && (
+              <CategorySwiper
+                products={filteredProducts}
+                handleAddToCart={handleAddToCart}
+                addingId={addingId}
+                successId={successId}
+              />
             )}
+
+            {hasChildren && category.children.map((sub) => (
+              <div key={sub.id} className="mt-10">
+                <h3 className="text-3xl font-bold italic text-[#D4AF37] mb-4 pl-2">
+                  {sub.name}
+                </h3>
+
+                <CategorySwiper
+                  products={sub.products || []}
+                  handleAddToCart={handleAddToCart}
+                  addingId={addingId}
+                  successId={successId}
+                />
+              </div>
+            ))}
+
           </div>
         );
       })}
     </section>
+  );
+}
+
+function CategorySwiper({ products, handleAddToCart, addingId, successId }) {
+  if (!products || products.length === 0) return null;
+
+  const isDesktopCarousel = products.length > 3;
+
+  return isDesktopCarousel ? (
+    <Swiper
+      className="z-[1]"
+      modules={[Navigation, Pagination, Autoplay]}
+      spaceBetween={20}
+      slidesPerView={1}
+      navigation
+      autoplay={{ delay: 2500, disableOnInteraction: false }}
+      breakpoints={{
+        640: { slidesPerView: 2 },
+        768: { slidesPerView: 2 },
+        1024: { slidesPerView: 3 },
+      }}
+      style={{ '--swiper-navigation-color': '#000' }}
+    >
+      {products.map(product => (
+        <SwiperSlide key={product.id}>
+          <ProductCard
+            product={product}
+            handleAddToCart={handleAddToCart}
+            addingId={addingId}
+            successId={successId}
+          />
+        </SwiperSlide>
+      ))}
+    </Swiper>
+  ) : (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      {products.map(product => (
+        <ProductCard
+          key={product.id}
+          product={product}
+          handleAddToCart={handleAddToCart}
+          addingId={addingId}
+          successId={successId}
+        />
+      ))}
+    </div>
   );
 }

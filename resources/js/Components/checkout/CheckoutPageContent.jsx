@@ -2,19 +2,24 @@
 import { useState, useEffect } from 'react';
 import { useCart } from '@/Contexts/CartContext';
 import CheckoutHeader from './CheckoutHeader';
-import CustomerInfo from './CustomerInfo';
+import CustomerInfoForm from './CustomerInfo'; // Formulario editable
 import CartItems from './CartItems';
 import ShippingForm from './ShippingForm';
 import OrderSummary from './OrderSummary';
 import Layout from '@/Layouts/LayoutCheckout';
 import { Head, router } from '@inertiajs/react';
 
-export default function CheckoutPageContent({ auth }) {
+export default function CheckoutPageContent() {
     const { cart = [], subtotal = 0, total = 0 } = useCart();
     const [loading, setLoading] = useState(true);
     const [processing, setProcessing] = useState(false);
+
+    // Datos del cliente
+    const [customerName, setCustomerName] = useState('');
+    const [customerPhone, setCustomerPhone] = useState('');
+
     const [shippingType, setShippingType] = useState("local");
-    const [date, setDate] = useState(null); // ✅ Inicializado como null
+    const [date, setDate] = useState(null);
     const [time, setTime] = useState("");
     const [address, setAddress] = useState("Recojo en el local");
 
@@ -23,6 +28,12 @@ export default function CheckoutPageContent({ auth }) {
     }, [cart]);
 
     const handlePlaceOrder = () => {
+        // Validaciones
+        if (!customerName.trim() || !customerPhone.trim()) {
+            alert("Debes ingresar tu nombre y número de teléfono.");
+            return;
+        }
+
         if (shippingType === "envio") {
             if (!address.trim()) {
                 alert("Debes ingresar una dirección para el envío a domicilio.");
@@ -47,8 +58,10 @@ export default function CheckoutPageContent({ auth }) {
             subtotal: item.price * item.qty
         }));
 
+        // Enviar pedido al backend
         router.post('/orders/store', {
-            user_id: auth.user.id,
+            customer_name: customerName,
+            customer_phone: customerPhone,
             shipping_type: shippingType,
             delivery_date: date,
             delivery_time: time,
@@ -68,15 +81,22 @@ export default function CheckoutPageContent({ auth }) {
     };
 
     return (
-        <Layout title="Checkout" auth={auth}>
+        <Layout title="Checkout">
             <Head title="Checkout" />
             <div className="max-w-2xl mx-auto p-4 text-white">
                 <CheckoutHeader />
-                <CustomerInfo user={auth.user} />
+
+                <CustomerInfoForm
+                    customerName={customerName}
+                    setCustomerName={setCustomerName}
+                    customerPhone={customerPhone}
+                    setCustomerPhone={setCustomerPhone}
+                />
+
                 <CartItems cart={cart} loading={loading} />
 
                 <ShippingForm
-                    shippingType={shippingType} 
+                    shippingType={shippingType}
                     setShippingType={(type) => {
                         setShippingType(type);
                         setAddress(type === "local" ? "Recojo en el local" : "");

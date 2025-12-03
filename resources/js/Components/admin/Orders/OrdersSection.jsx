@@ -6,12 +6,9 @@ import GlobalSpinner from "./GlobalSpinner";
 export default function OrdersSection() {
   const [orders, setOrders] = useState(null);
   const [loading, setLoading] = useState(true);
-
   const [globalLoading, setGlobalLoading] = useState(false);
-
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [editOrder, setEditOrder] = useState(null);
-
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
 
@@ -34,13 +31,10 @@ export default function OrdersSection() {
     fetchOrders();
   }, [page, search]);
 
-  // ❌ Eliminar con spinner global
   const deleteOrder = async (id) => {
     if (!confirm("¿Seguro quieres eliminar esta orden?")) return;
-
     try {
       setGlobalLoading(true);
-
       const csrfToken = document
         .querySelector('meta[name="csrf-token"]')
         .getAttribute("content");
@@ -76,11 +70,9 @@ export default function OrdersSection() {
     setEditOrder(await res.json());
   };
 
-  // ✅ Guardar edición con spinner global
   const saveEdit = async () => {
     try {
       setGlobalLoading(true);
-
       const csrfToken = document
         .querySelector('meta[name="csrf-token"]')
         .getAttribute("content");
@@ -110,15 +102,12 @@ export default function OrdersSection() {
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-4 max-w-7xl w-full">
-
-      {/* SPINNER GLOBAL */}
       <GlobalSpinner visible={globalLoading} />
 
       <h2 className="text-2xl text-center font-semibold mb-4 text-gray-800">
         Órdenes
       </h2>
 
-      {/* BUSQUEDA */}
       <div className="mb-4">
         <input
           className="w-full border rounded px-3 py-2"
@@ -167,7 +156,7 @@ export default function OrdersSection() {
               orders.data.map((order) => (
                 <tr key={order.id} className="hover:bg-gray-50">
                   <td className="text-center border px-2">{order.id}</td>
-                  <td className="text-center border px-2">{order.user?.name || "-"}</td>
+                  <td className="text-center border px-2">{order.customer_name || "-"}</td>
                   <td className="text-center border px-2">{order.total} bs</td>
                   <td className="text-center border px-2">{order.status?.name || "-"}</td>
                   <td className="text-center border px-2">{order.note || "-"}</td>
@@ -208,7 +197,6 @@ export default function OrdersSection() {
         </table>
       </div>
 
-      {/* Paginación */}
       {orders && (
         <div className="flex justify-center mt-4 gap-3">
           <button
@@ -231,7 +219,6 @@ export default function OrdersSection() {
         </div>
       )}
 
-      {/* Modales */}
       {selectedOrder && (
         <ViewOrderModal
           order={selectedOrder}

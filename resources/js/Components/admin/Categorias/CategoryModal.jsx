@@ -5,20 +5,24 @@ export default function CategoryModal({
   close,
   editingCategory,
   setEditingCategory,
-  refresh
+  refresh,
+  categories = [] // lista de categorías para parent_id
 }) {
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [parentId, setParentId] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (editingCategory) {
       setName(editingCategory.name);
       setDescription(editingCategory.description || "");
+      setParentId(editingCategory.parent_id || null);
     } else {
       setName("");
       setDescription("");
+      setParentId(null);
     }
   }, [editingCategory]);
 
@@ -36,7 +40,7 @@ export default function CategoryModal({
         "Content-Type": "application/json",
         "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
       },
-      body: JSON.stringify({ name, description })
+      body: JSON.stringify({ name, description, parent_id: parentId })
     });
 
     setLoading(false);
@@ -69,6 +73,20 @@ export default function CategoryModal({
           onChange={e => setDescription(e.target.value)}
         />
 
+        {/* Selector de categoría padre */}
+        <select
+          className="w-full px-3 py-2 mb-3 border rounded-lg"
+          value={parentId || ""}
+          onChange={e => setParentId(e.target.value || null)}
+        >
+          <option value="">Categoría raíz</option>
+          {categories.map(cat => (
+            <option key={cat.id} value={cat.id}>
+              {cat.name}
+            </option>
+          ))}
+        </select>
+
         <div className="flex justify-end gap-2">
           <button
             onClick={close}
@@ -83,9 +101,6 @@ export default function CategoryModal({
             disabled={loading}
             className="flex items-center gap-2 px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 disabled:opacity-50"
           >
-            {loading && (
-              <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
-            )}
             {loading ? "Guardando..." : "Guardar"}
           </button>
         </div>

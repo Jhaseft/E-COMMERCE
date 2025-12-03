@@ -36,16 +36,14 @@ Route::prefix('carrito')->group(function () {
     Route::delete('/clear', [CartController::class, 'clear'])->name('carrito.clear');
 });
 
-// Rutas protegidas por autenticación
-Route::middleware(['auth', 'verified'])->group(function () {
-    // Checkout
+
     Route::get('/checkout', function () {
         return Inertia::render('checkout');
     })->name('checkout');
 
     // Endpoint para crear pedido
     Route::post('/orders/store', [PedidosController::class, 'store'])->name('orders.store');
-});
+
 
 
 Route::prefix('admin')->group(function () {
@@ -68,6 +66,7 @@ Route::prefix('admin')->group(function () {
     Route::post('/products', [AdminCategoryProductsController::class, 'store']);
     Route::put('/products/{product}', [AdminCategoryProductsController::class, 'update']);
     Route::delete('/products/{product}', [AdminCategoryProductsController::class, 'destroy']);
+
 //mostar estados y metodos de pago
 Route::get('/orders/meta', [OrderController::class, 'meta']);
         // Ordenes
@@ -75,8 +74,8 @@ Route::get('/orders/meta', [OrderController::class, 'meta']);
     Route::get('/orders/{order}', [OrderController::class, 'show']);
     Route::put('/orders/{order}', [OrderController::class, 'update']);
     Route::delete('/orders/{order}', [OrderController::class, 'destroy']);
+    
     // Reportes de ventas
-
 Route::get('/reportes', [ReportController::class, 'ventas']);
 Route::get('/reportes/excel', [ReportController::class, 'exportExcel']);
 Route::get('/reportes/csv', [ReportController::class, 'exportCsv']);

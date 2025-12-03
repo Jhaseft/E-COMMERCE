@@ -73,6 +73,7 @@ export default function CategoriesSection({ categories: initialCategoriesData })
         editingCategory={editingCategory}
         setEditingCategory={setEditingCategory}
         refresh={refreshPage}
+        categories={categoriesData.data} // enviar categorías para selector padre
       />
 
       <CategoryList

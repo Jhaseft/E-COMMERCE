@@ -30,42 +30,16 @@ export default function Header({ auth }) {
           </Link>
 
           {/* NAV */}
-          <nav className="flex  md:text-xl md:gap-10 text-xs gap-1 font-medium">
-            {auth?.user ? (
-
-                <Link
-                  href={route('logout')}
-                  method="post"
-                  as="button"
-                  className="relative hover:text-[#D4AF37] transition duration-300 
-                             after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-0 
-                             after:bg-[#D4AF37] after:transition-all after:duration-300 hover:after:w-full"
-                >
-                  Log Out
-                </Link>
-            
-            ) : (
-              <>
-                <Link
-                  href={route('login')}
-                  className="relative hover:text-[#D4AF37] transition duration-300 
-                             after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-0 
-                             after:bg-[#D4AF37] after:transition-all after:duration-300 hover:after:w-full
-                             "
-                >
-                  Iniciar sesión
-                </Link>
-
-                <Link
-                  href={route('register')}
-                  className="relative hover:text-[#D4AF37] transition duration-300 
-                             after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-0 
-                             after:bg-[#D4AF37] after:transition-all after:duration-300 hover:after:w-full"
-                >
-                  Registrarse
-                </Link>
-              </>
-            )}
+          <nav className="flex md:text-xl md:gap-10 text-xs gap-1 font-medium">
+            {/* Aquí puedes agregar otros enlaces de navegación si los tienes */}
+            <Link
+              href="/contacto"
+              className="relative hover:text-[#D4AF37] transition duration-300 
+                         after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-0 
+                         after:bg-[#D4AF37] after:transition-all after:duration-300 hover:after:w-full"
+            >
+              Contacto
+            </Link>
           </nav>
         </div>
       </header>

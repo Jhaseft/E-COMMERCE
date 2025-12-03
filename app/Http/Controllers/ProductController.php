@@ -10,20 +10,29 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $search = $request->query('search', '');
-        $category = $request->query('category', '');
+        $categorySlug = $request->query('category', '');
 
-        $categoriesQuery = Category::with(['products' => function ($query) use ($search) {
-            $query->where('available', 1)
-                  ->when($search, fn($q) => $q->where('name', 'like', "%$search%")
-                                               ->orWhere('description', 'like', "%$search%"));
-        }]);
+        $categoriesQuery = Category::with([
+            'products' => function ($query) use ($search) {
+                $query->where('available', 1)
+                      ->when($search, fn($q) => 
+                           $q->where('name', 'like', "%$search%")
+                             ->orWhere('description', 'like', "%$search%"));
+            },
+            'children.products' => function ($query) use ($search) {
+                $query->where('available', 1)
+                      ->when($search, fn($q) => 
+                           $q->where('name', 'like', "%$search%")
+                             ->orWhere('description', 'like', "%$search%"));
+            }
+        ]);
 
-        if ($category) {
-            $categoriesQuery->where('name', $category);
+        if ($categorySlug) {
+            $categoriesQuery->where('slug', $categorySlug);
         }
 
         try {
-            $categories = $categoriesQuery->get();
+            $categories = $categoriesQuery->whereNull('parent_id')->get();
             return response()->json($categories);
         } catch (\Exception $e) {
             return response()->json([

@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
 use App\Models\OrderStatus;
 use App\Models\PaymentMethod;
 use App\Models\OrderItem;
@@ -16,26 +15,22 @@ class Order extends Model
     protected $table = 'orders';
 
     protected $fillable = [
-        'user_id',
+        'customer_name',
+        'customer_phone',
         'status_id',
         'payment_method_id',
         'total',
         'note',
-        'delivery_date',   // agregado
-        'delivery_time',   // agregado
+        'delivery_date',
+        'delivery_time',
     ];
 
     protected $casts = [
         'total' => 'decimal:2',
-        'delivery_date' => 'date', // casteo a date
+        'delivery_date' => 'date',
     ];
 
     // Relaciones
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
     public function status()
     {
         return $this->belongsTo(OrderStatus::class, 'status_id');
