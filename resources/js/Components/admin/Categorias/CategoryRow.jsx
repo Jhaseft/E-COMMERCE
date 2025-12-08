@@ -1,3 +1,5 @@
+import { Link } from '@inertiajs/react';
+
 export default function CategoryRow({
   category,
   isSelectable,
@@ -6,7 +8,7 @@ export default function CategoryRow({
   onEdit,
   onOpenChildrenModal
 }) {
-  
+
   return (
     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-gray-100 p-4 rounded-lg shadow gap-2">
       <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -44,12 +46,12 @@ export default function CategoryRow({
           </button>
         )}
 
-        <button
+        <Link
+          href={`/admin/categories/${category.id}/products`}
           className="text-blue-600 font-semibold hover:text-blue-800"
-          onClick={() => router.get(`/admin/categories/${category.id}/products`)}
         >
           Ver productos →
-        </button>
+        </Link>
 
       </div>
 
